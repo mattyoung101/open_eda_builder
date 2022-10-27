@@ -21,24 +21,30 @@ RUN git clone https://github.com/steveicarus/iverilog.git && git clone https://g
 
 # Build Icarus
 WORKDIR /build/iverilog
-RUN sh autoconf.sh && ./configure && make -j32 && make install
+RUN sh autoconf.sh && ./configure && make -j$(nproc) && make install
 
 # Build Yosys
 WORKDIR /build/yosys
-# TODO: make config-clang will use Clang 10, not Clang 12
-RUN make config-clang && make -j32 && make install
+# Unfortunately Yosys is still built with Make, not CMake, so this is how we have to edit the config file
+# This switches Clang-10 (Ubuntu default) to Clang-15, and enables ENABLE_NDEBUG which in turn enables -O3 for
+# better performance
+RUN sed -i "s/CXX = clang/CXX = clang-15/g" Makefile && sed -i "s/LD = clang++/LD = clang++-15/g" Makefile \
+    && sed -i "s/ENABLE_NDEBUG := 0/ENABLE_NDEBUG := 1/g" Makefile
+RUN make config-clang && make -j$(nproc) && make install
 
 # Build Project Trellis (for ECP5 support)
 WORKDIR /build/prjtrellis/libtrellis/
-RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local . && make -j32 && make install
+RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local . && make -j$(nproc) && make install
 
 # TODO build Project IceStorm (for ICE40 support)
 
 # Build Nextpnr
 # TODO add ICE40 target
 WORKDIR /build/nextpnr/
-RUN cmake . -DARCH=ecp5 -DTRELLIS_INSTALL_PREFIX=/usr/local -DBUILD_GUI=ON && make -j32 && make install
+RUN cmake . -DARCH=ecp5 -DTRELLIS_INSTALL_PREFIX=/usr/local -DBUILD_GUI=ON && make -j$(nproc) && make install
 
-# Create a build archive
+# Create a build archive using zstandard
+# TODO exclude  and 
 WORKDIR /build/
-RUN tar -cvf open_eda_builder.tar.zst /usr/local/bin /usr/local/share /usr/local/share /usr/local/lib /usr/local/include -I "zstd -T0 -19 --long"
+RUN tar --exclude="/usr/local/share/fonts" --exclude="/usr/local/share/ca-certificates" -cvf open_eda_builder.tar.zst \
+    /usr/local/bin /usr/local/share /usr/local/lib /usr/local/include -I "zstd -T0 -19 --long"

@@ -16,7 +16,7 @@ dist:
 
 # Upload to GitHub
 upload:
-	gh release create -n "This build was automatically generated on $(shell date -I) (AEST time)." "$(shell date -I)"
+	gh release create -n "This build was automatically generated on $(shell date -I) (AEST)" -t "$(shell date -I)" "$(shell date -I)"
 	gh release upload "$(shell date -I)" open_eda_builder.tar.zst
 
 # Remove archive
