@@ -4,9 +4,12 @@ all: base tools dist upload
 base:
 	docker build -f Dockerfile.base -t "open_eda_builder/base" .
 
-# Build tools
-# TODO may need to delete existing image to force rebuild (or bump version number)
+# Build the actual EDA tools. We also delete the "open_eda_builder" image to force a rebuild.
+# Note the - in front of the docker image rm is to discard errors: https://stackoverflow.com/a/2670143/5007892
+# TODO find a better way of pruning only open_eda_builder related images instead of docker image prune -f (which is bad)
 tools:
+	-docker image rm "open_eda_builder"
+	docker image prune -f
 	docker build -f Dockerfile -t "open_eda_builder" .
 
 # Extract build archive out of image

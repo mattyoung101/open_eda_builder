@@ -44,7 +44,6 @@ WORKDIR /build/nextpnr/
 RUN cmake . -DARCH=ecp5 -DTRELLIS_INSTALL_PREFIX=/usr/local -DBUILD_GUI=ON && make -j$(nproc) && make install
 
 # Create a build archive using zstandard
-# TODO exclude  and 
 WORKDIR /build/
 RUN tar --exclude="/usr/local/share/fonts" --exclude="/usr/local/share/ca-certificates" -cvf open_eda_builder.tar.zst \
     /usr/local/bin /usr/local/share /usr/local/lib /usr/local/include -I "zstd -T0 -19 --long"
