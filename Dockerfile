@@ -17,11 +17,16 @@ FROM open_eda_builder/base:latest
 # Clone repositories
 WORKDIR /build
 RUN git clone https://github.com/steveicarus/iverilog.git && git clone https://github.com/yosyshq/yosys.git && \
-    git clone --recursive https://github.com/YosysHQ/prjtrellis.git && git clone https://github.com/YosysHQ/nextpnr.git
+    git clone --recursive https://github.com/YosysHQ/prjtrellis.git && git clone https://github.com/YosysHQ/nextpnr.git && \
+    git clone https://github.com/verilator/verilator.git && git clone https://github.com/YosysHQ/icestorm.git
 
-# Build Icarus
+# Build Icarus Verilog
 WORKDIR /build/iverilog
 RUN sh autoconf.sh && ./configure && make -j$(nproc) && make install
+
+# Build Verilator
+WORKDIR /build/verilator
+RUN autoconf && ./configure && make -j$(nproc) && make install
 
 # Build Yosys
 WORKDIR /build/yosys
@@ -32,16 +37,17 @@ RUN sed -i "s/CXX = clang/CXX = clang-15/g" Makefile && sed -i "s/LD = clang++/L
     && sed -i "s/ENABLE_NDEBUG := 0/ENABLE_NDEBUG := 1/g" Makefile
 RUN make config-clang && make -j$(nproc) && make install
 
-# Build Project Trellis (for ECP5 support)
+# Build Project Trellis (for Lattice ECP5 support)
 WORKDIR /build/prjtrellis/libtrellis/
 RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local . && make -j$(nproc) && make install
 
-# TODO build Project IceStorm (for ICE40 support)
+# Build Project IceStorm (for Lattice ICE40 support)
+WORKDIR /build/icestorm
+RUN make -j32 && make install
 
-# Build Nextpnr
-# TODO add ICE40 target
+# Build Nextpnr (ECP5 & ICE40 targets)
 WORKDIR /build/nextpnr/
-RUN cmake . -DARCH=ecp5 -DTRELLIS_INSTALL_PREFIX=/usr/local -DBUILD_GUI=ON && make -j$(nproc) && make install
+RUN cmake . -DARCH="ice40;ecp5;generic" -DTRELLIS_INSTALL_PREFIX=/usr/local -DBUILD_GUI=ON && make -j$(nproc) && make install
 
 # Create a build archive using zstandard
 WORKDIR /build/

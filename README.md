@@ -13,14 +13,13 @@ The following tools are currently built:
 
 - Icarus Verilog
 - Yosys
-- Project Trellis (Yosys support for Lattice ECP5)
-- Nextpnr (architectures: ECP5, with GUI support)
+- Project Trellis (support for Lattice ECP5)
+- Nextpnr (architectures: ECP5, iCE40, Generic. GUI support enabled.)
+- Verilator
 
 In the future, I might also add support to build the following:
 
-- Verilator
-- GTKWave
-- More nextpnr architectures (e.g. iCE40)
+- GTKWave (currently not updated frequently enough to warrant building weekly)
 
 **Disclaimer:** This repository is mainly for personal use by me on my systems. It may work on yours. That being said, 
 I am not a Docker expert, and this is not a full time project. These binaries may be out of date, blow
@@ -54,7 +53,13 @@ To perform a full build, just run `make`. The Makefile has a lot of different ta
 well in there, so probably read that. I'm the only one with write access to the open_eda_builder repo, so you
 won't be able to upload builds to _this_ repo, but you can always upload them to your own.
 
-Dependencies needed to run a build are Docker, the GitHub CLI, make, tar and zstd.
+To perform a build, you will need the following tools installed on your _local_ system:
+
+- Docker: a good install guide, including setting up rootless access, is [located here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04)
+- Make: `sudo apt install build-essential`
+- GitHub CLI: instructions [here](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+
+On my AMD Ryzen 9 5950X with 32GB RAM, it takes around 22 minutes for a complete build.
 
 ## Future improvements
 - Install and use mold linker to compile tools (should be faster)
