@@ -30,7 +30,7 @@ RUN autoconf && ./configure && make -j$(nproc) && make install
 
 # Build Yosys
 WORKDIR /build/yosys
-# Unfortunately Yosys is still built with Make, not CMake, so this is how we have to edit the config file
+# Unfortunately Yosys is still built with Make, not CMake, so this is how we have to edit the config file.
 # This switches Clang-10 (Ubuntu default) to Clang-15, and enables ENABLE_NDEBUG which in turn enables -O3 for
 # better performance
 RUN sed -i "s/CXX = clang/CXX = clang-15/g" Makefile && sed -i "s/LD = clang++/LD = clang++-15/g" Makefile \
@@ -45,9 +45,12 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local . && make -j$(nproc) && make install
 WORKDIR /build/icestorm
 RUN make -j32 && make install
 
-# Build Nextpnr (ECP5 & ICE40 targets)
+# Build Nextpnr (ECP5, iCE40 & generic targets)
 WORKDIR /build/nextpnr/
 RUN cmake . -DARCH="ice40;ecp5;generic" -DTRELLIS_INSTALL_PREFIX=/usr/local -DBUILD_GUI=ON && make -j$(nproc) && make install
+
+# Strip all binaries in the /usr/local/bin directory (reduce size of archive a little bit)
+RUN find /usr/local/bin -maxdepth 1 -type f -exec strip --strip-unneeded {} \;
 
 # Create a build archive using zstandard
 WORKDIR /build/
