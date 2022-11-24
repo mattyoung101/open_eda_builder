@@ -21,6 +21,7 @@ future, unless it's added via a PR. Scroll down to see more info about how the b
 In the future, I might also add support to build the following:
 
 - GTKWave
+- svls?
 - Any other project (open an issue - or a PR! - and I'll see what I can do)
 
 **Why does this exist?** Open-source FPGA development is awesome. There is a great community of developers working
@@ -42,13 +43,29 @@ Builds are upload as Zstandard compressed tarballs (.tar.zst), due to its excell
 essential to tackle the miserable state of Australian NBN upload speeds.
 You will need to install zstd (`sudo apt install zstd`) to decompress them using the tar utility.
 
-To install a build:
+**To install a build:**
 - Go to the GitHub release page, pick the latest release, and download `open_eda_builder.tar.zst`
 - Extract and install using: `sudo tar -xvf <path to open_eda_builder.tar.zst> -C /`
-    - This will extract the build to /usr/local, but should not overwrite any existing files, so should be safe
+    - This will extract the build to /usr/local, but should not overwrite any additional files except those by previous
+    open_eda_builder installs. If you don't trust me, you can open the .tar.zst file and check yourself.
     - That being said, I recognise this is potentially unsafe and reeks of bad security (extracting a tarball with
     root permissions to / is not ideal!). In the future, I will see if I can make a DEB package or bundle it in a
     directory like Yosys' oss-cad-suite-build does.
+
+### open_eda_builder vs...
+Yosys has another project called oss-cad-suite-build which is very similar to open_eda_builder. Here is a comparison so you
+can make your own decision:
+
+| **Item**            | **open_eda_builder** (this work)                  | **oss-cad-suite-build**                                                                                                   |
+|---------------------|---------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| Platforms supported | Linux x86_64                                      | Windows (x86_64), Mac (x86_64, ARM64),  Linux (x86_64, ARM32/64, RISC-V 64)                                               |
+| Build times         | Roughly once a week                               | Every day consistently                                                                                                    |
+| Installation        | Single command, system wide install to /usr/local | Extract archive and source environment script to use. Not supposed to invoke executables directly. Uses ld.so manually.   |
+| Author              | Third party                                       | Maintained by Yosys itself                                                                                                |
+| Build size          | ~90 MB, compressed (tar.zst)                      | ~480 MB, compressed (tar.gz)                                                                                              |
+
+I created open_eda_builder because I was having trouble using nextpnr's GUI in oss-cad-suite-build, due to how it bundles
+the binaries (it appears to involve manually invoking ld.so with a set of libraries), which was breaking Mesa for me. YMMV.
 
 ## Developer guide
 ### Basic build information
