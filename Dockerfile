@@ -43,7 +43,7 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local . && make -j$(nproc) && make install
 
 # Build Project IceStorm (for Lattice ICE40 support)
 WORKDIR /build/icestorm
-RUN make -j32 && make install
+RUN make -j$(nproc) && make install
 
 # Build Nextpnr (ECP5, iCE40 & generic targets)
 WORKDIR /build/nextpnr/
@@ -52,7 +52,7 @@ RUN cmake . -DARCH="ice40;ecp5;generic" -DTRELLIS_INSTALL_PREFIX=/usr/local -DBU
 # Strip all binaries in the /usr/local/bin directory (reduce size of archive a little bit)
 RUN find /usr/local/bin -maxdepth 1 -type f -exec strip --strip-unneeded {} \;
 
-# Create a build archive using zstandard
+# Create a build archive using zstandard. Exclude directories that are useless or may conflict with the user's computer.
 WORKDIR /build/
 RUN tar --exclude="/usr/local/share/fonts" --exclude="/usr/local/share/ca-certificates" -cvf open_eda_builder.tar.zst \
     /usr/local/bin /usr/local/share /usr/local/lib /usr/local/include -I "zstd -T0 -19 --long"
