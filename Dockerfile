@@ -16,9 +16,13 @@ FROM open_eda_builder/base:latest
 
 # Clone repositories
 WORKDIR /build
-RUN git clone https://github.com/steveicarus/iverilog.git && git clone https://github.com/yosyshq/yosys.git && \
-    git clone --recursive https://github.com/YosysHQ/prjtrellis.git && git clone https://github.com/YosysHQ/nextpnr.git && \
-    git clone https://github.com/verilator/verilator.git && git clone https://github.com/YosysHQ/icestorm.git
+RUN git clone https://github.com/steveicarus/iverilog.git && \
+    git clone https://github.com/yosyshq/yosys.git && \
+    git clone --recursive https://github.com/YosysHQ/prjtrellis.git && \
+    git clone https://github.com/YosysHQ/nextpnr.git && \
+    git clone https://github.com/verilator/verilator.git && \ 
+    git clone https://github.com/YosysHQ/icestorm.git && \
+    git clone https://github.com/trabucayre/openFPGALoader.git
 
 # Build Icarus Verilog
 WORKDIR /build/iverilog
@@ -48,6 +52,11 @@ RUN make -j$(nproc) && make install
 # Build Nextpnr (ECP5, iCE40 & generic targets)
 WORKDIR /build/nextpnr/
 RUN cmake . -DARCH="ice40;ecp5;generic" -DTRELLIS_INSTALL_PREFIX=/usr/local -DBUILD_GUI=ON && make -j$(nproc) && make install
+
+# Build openFPGALoader
+WORKDIR /build/openFPGALoader
+RUN cmake -B build && cd build && make -j$(nproc) && make install
+
 
 # Strip all binaries in the /usr/local/bin directory (reduce size of archive a little bit)
 RUN find /usr/local/bin -maxdepth 1 -type f -exec strip --strip-unneeded {} \;

@@ -2,12 +2,15 @@
 This repository contains automated, bleeding-edge builds of various EDA tools used in FPGA development. 
 The builds are automated using Docker and come direct from the latest commit on each project's git repo.
 
-Builds are currently manually invoked by me on an ad-hoc basis when I remember, but usually about once a week. In the
-near-ish future, I will either set up a systemd timer for this or run it in the cloud, to make it more predictable.
+Builds are currently manually invoked by me on an ad-hoc basis when I remember, but usually about once a week.
+If this repo is actively used by anyone, please let me know and I'll setup GitHub Actions to run it more consistently
+in the cloud.
 
 The builds are currently for Linux only, and are compiled under Ubuntu 20.04, so your mileage may vary on
-other distributions. I do not plan to target other distributions or other operating systems in the forseeable
-future, unless it's added via a PR. Scroll down to see more info about how the builds work and how to install them.
+other distributions. I do not plan to target other distributions (except Ubuntu 22.04) or other operating systems 
+in the foreseeable future, unless it's added via a PR. 
+
+Scroll down to see more info about how the builds work and how to install them.
 
 **The following tools are currently built:**
 
@@ -17,19 +20,19 @@ future, unless it's added via a PR. Scroll down to see more info about how the b
 - Project Icestorm (support for Lattice iCE40)
 - Nextpnr (architectures: ECP5, iCE40, Generic. GUI support enabled.)
 - Verilator
+- openFPGALoader
 
 In the future, I might also add support to build the following:
 
 - GTKWave
-- svls?
+- Svls
 - Any other project (open an issue - or a PR! - and I'll see what I can do)
 
-**Why does this exist?** Open-source FPGA development is awesome. There is a great community of developers working
-on all the above tools and making great strides every day. Because of the rapid pace of development, packages
-shipped by your distribution (if they exist at all!) are usually too outdated. For example, the version of Icarus
-Verilog shipped by Ubuntu 20.04 barely supports SystemVerilog at all compared to the latest Icarus Verilog. 
-The aim of open_eda_builder is to make it a little less time consuming to get a good Linux dev environment for
-FPGA development set up.
+**Why does this exist?** In recent years, several really cool open-source EDA tools and FPGA development tools
+have been created. These tools are very actively maintained by their community, some featuring almost daily
+commits. Most Linux distros don't ship packages for these tools, and if they do, the packages are usually too 
+old to do cutting-edge FPGA work. The aim of open_eda_builder is to make it as easy as possible to get an up-to-date
+Linux development environment for FPGA development set up.
 
 **Disclaimer:** This repository is mainly for personal use by me on my systems. It may work on yours. That being said, 
 I am not a Docker expert, and this is not a full time project. These binaries may be out of date, blow
@@ -39,8 +42,7 @@ up your system, or not compile at all. Use at your own risk.
 
 ## User guide
 ### Installing a build
-Builds are upload as Zstandard compressed tarballs (.tar.zst), due to its excellent compression ratio. This is
-essential to tackle the miserable state of Australian NBN upload speeds.
+Builds are upload as Zstandard compressed tarballs (.tar.zst), due to its excellent compression ratio.
 You will need to install zstd (`sudo apt install zstd`) to decompress them using the tar utility.
 
 **To install a build:**
@@ -51,21 +53,6 @@ You will need to install zstd (`sudo apt install zstd`) to decompress them using
     - That being said, I recognise this is potentially unsafe and reeks of bad security (extracting a tarball with
     root permissions to / is not ideal!). In the future, I will see if I can make a DEB package or bundle it in a
     directory like Yosys' oss-cad-suite-build does.
-
-### open_eda_builder vs...
-Yosys has another project called oss-cad-suite-build which is very similar to open_eda_builder. Here is a comparison so you
-can make your own decision:
-
-| **Item**            | **open_eda_builder** (this work)                  | **oss-cad-suite-build**                                                                                                   |
-|---------------------|---------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| Platforms supported | Linux x86_64                                      | Windows (x86_64), Mac (x86_64, ARM64),  Linux (x86_64, ARM32/64, RISC-V 64)                                               |
-| Build times         | Roughly once a week                               | Every day consistently                                                                                                    |
-| Installation        | Single command, system wide install to /usr/local | Extract archive and source environment script to use. Not supposed to invoke executables directly. Uses ld.so manually.   |
-| Author              | Third party                                       | Maintained by Yosys itself                                                                                                |
-| Build size          | ~90 MB, compressed (tar.zst)                      | ~480 MB, compressed (tar.gz)                                                                                              |
-
-I created open_eda_builder because I was having trouble using nextpnr's GUI in oss-cad-suite-build, due to how it bundles
-the binaries (it appears to involve manually invoking ld.so with a set of libraries), which was breaking Mesa for me. YMMV.
 
 ## Developer guide
 ### Basic build information
