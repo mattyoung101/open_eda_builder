@@ -6,16 +6,16 @@ Builds are currently manually invoked by me on an ad-hoc basis when I remember, 
 If this repo is actively used by anyone, please let me know and I'll setup GitHub Actions to run it more consistently
 in the cloud.
 
-The builds are currently for Linux only, and are compiled under Ubuntu 20.04, so your mileage may vary on
-other distributions. I do not plan to target other distributions (except Ubuntu 22.04) or other operating systems 
-in the foreseeable future, unless it's added via a PR. 
+The builds are currently for Ubuntu 20.04 Linux only, so your mileage may vary on other distributions. I do
+not plan to target other distributions (except Ubuntu 22.04) or other operating systems in the foreseeable
+future, unless it's added via a PR. 
 
 Scroll down to see more info about how the builds work and how to install them.
 
 **The following tools are currently built:**
 
 - Icarus Verilog
-- Yosys
+- Yosys (includes [AntMicro's SystemVerilog plugin](https://github.com/antmicro/yosys-systemverilog))
 - Project Trellis (support for Lattice ECP5)
 - Project Icestorm (support for Lattice iCE40)
 - Nextpnr (architectures: ECP5, iCE40, Generic. GUI support enabled.)

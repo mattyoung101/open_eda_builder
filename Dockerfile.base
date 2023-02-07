@@ -70,12 +70,27 @@ RUN apt update && apt install -y \
     libftdi1 \
     libftdi1-dev \
     libudev-dev \
-    help2man
+    help2man \
+    jq \
+    python3-pip \
+    tclsh \
+    ant \
+    default-jre \
+    swig \
+    google-perftools \
+    libgoogle-perftools-dev \
+    uuid \
+    uuid-dev \
+    tcl-dev \
+    ghc
+RUN pip3 install orderedmultidict
 
 # install the latest clang (clang 15 at the time of writing)
 RUN wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 15 && apt update && apt install -y libomp5-15
 # tell environment to use latest clang
 ARG CC=clang-15
 ARG CXX=clang++-15
+ARG LD=clang++-15
 ENV CC=clang-15
 ENV CXX=clang++-15
+ENV LD=clang++-15

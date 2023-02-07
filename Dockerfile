@@ -22,7 +22,8 @@ RUN git clone https://github.com/steveicarus/iverilog.git && \
     git clone https://github.com/YosysHQ/nextpnr.git && \
     git clone https://github.com/verilator/verilator.git && \ 
     git clone https://github.com/YosysHQ/icestorm.git && \
-    git clone https://github.com/trabucayre/openFPGALoader.git
+    git clone https://github.com/trabucayre/openFPGALoader.git && \
+    git clone --recursive https://github.com/antmicro/yosys-systemverilog.git
 
 # Build Icarus Verilog
 WORKDIR /build/iverilog
@@ -41,6 +42,12 @@ RUN sed -i "s/CXX = clang/CXX = clang-15/g" Makefile && sed -i "s/LD = clang++/L
     && sed -i "s/ENABLE_NDEBUG := 0/ENABLE_NDEBUG := 1/g" Makefile
 RUN make config-clang && make -j$(nproc) && make install
 
+# Build Yosys SystemVerilog plugin
+WORKDIR /build/yosys-systemverilog
+# The ./build_binaries.sh script rebuilds the entirety of Yosys from scratch, which is a colossal waste of time
+# but appears to be the only way to force it to install the yosys-systemverilog plugin?? why!!!
+RUN git submodule update --init --recursive && ./build_binaries.sh && ./install_plugin.sh 
+
 # Build Project Trellis (for Lattice ECP5 support)
 WORKDIR /build/prjtrellis/libtrellis/
 RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local . && make -j$(nproc) && make install
@@ -56,7 +63,6 @@ RUN cmake . -DARCH="ice40;ecp5;generic" -DTRELLIS_INSTALL_PREFIX=/usr/local -DBU
 # Build openFPGALoader
 WORKDIR /build/openFPGALoader
 RUN cmake -B build && cd build && make -j$(nproc) && make install
-
 
 # Strip all binaries in the /usr/local/bin directory (reduce size of archive a little bit)
 RUN find /usr/local/bin -maxdepth 1 -type f -exec strip --strip-unneeded {} \;
