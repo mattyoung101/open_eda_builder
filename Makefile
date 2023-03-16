@@ -11,6 +11,7 @@ base:
 tools:
 	-docker image rm -f "open_eda_builder"
 	docker image prune -f
+	docker builder prune -f
 	docker build -f Dockerfile -t "open_eda_builder"  .
 
 # Extract build archive out of image

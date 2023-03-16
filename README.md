@@ -64,6 +64,10 @@ So far, the builds have only been tested against Ubuntu 20.04 derivatives (namel
 running an older/newer Ubuntu system, or a non-Ubuntu distribution, your mileage may vary.
 
 ### Performing a build
+> **IMPORTANT NOTE: MAKEFILE MAY BE DESTRUCTIVE TO SOME DOCKER USERS.** Currently, it does a bunch of Docker prunes, in order
+to force a rebuild, which is obviously terrible but I haven't got around to fixing it. Strongly advise **against**
+performing a build if you have valuable Docker containers.
+
 To perform a full build, just run `make`. The Makefile has a lot of different targets for each part of the build 
 (building the base image, the tools, extracting the archive, uploading, cleaning, etc). It's documented pretty
 well in there, so probably read that. I'm the only one with write access to the open_eda_builder repo, so you
