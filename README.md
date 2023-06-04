@@ -1,4 +1,18 @@
 # Open EDA Builder
+## Deprecation Notice
+This repo has been deprecated, as I have since moved to Arch Linux which ships more up-to-date packages
+than Ubuntu. If you also choose to move to Arch, I suggest using the `verilator`, `yosys-nightly` and
+`nextpnr-all-nightly` packages. Note that the last two come from the AUR.
+
+Although I no longer need open_eda_builder for my personal use, the build scripts in the Dockerfiles should
+work until either Ubuntu or the upstream projects break them. If they do break, I suggest you move to
+[oss-cad-suite-build](https://github.com/YosysHQ/oss-cad-suite-build), or submit a fix via PR if you're feeling
+brave.
+
+Good luck with your FPGA development!
+
+-------
+
 This repository contains automated, bleeding-edge builds of various EDA tools used in FPGA development. 
 The builds are automated using Docker and come direct from the latest commit on each project's git repo.
 
